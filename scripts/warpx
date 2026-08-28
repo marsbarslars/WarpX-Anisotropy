@@ -1,0 +1,14 @@
+#!/bin/sh
+# POSIX wrapper around warpx.py. The driver is stdlib-only, so any system
+# Python 3.8+ works — .venv does not exist yet when `warpx sync` first runs.
+here=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+
+for py in python3 python py; do
+    command -v "$py" >/dev/null 2>&1 || continue
+    # `python` is still Python 2 on some systems; check before committing to it.
+    "$py" -c 'import sys; sys.exit(sys.version_info < (3, 8))' 2>/dev/null || continue
+    exec "$py" "$here/warpx.py" "$@"
+done
+
+echo "warpx: no Python 3.8+ interpreter found on PATH" >&2
+exit 1
