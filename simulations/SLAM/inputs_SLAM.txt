@@ -1,9 +1,9 @@
 ##########################
 # USER-DEFINED CONSTANTS #
 ##########################
-my_constants.Lx = 0.2 # [m]
-my_constants.Ly = 0.2 # [m]
-my_constants.Lz = 1 # [m]
+my_constants.Lx = 2 # [m]
+my_constants.Ly = 2 # [m]
+my_constants.Lz = 5 # [m]
 my_constants.dt = 4.4e-7 # [s]
 my_constants.Np = 1000
 
@@ -13,7 +13,7 @@ my_constants.Np = 1000
 geometry.dims = 3
 geometry.prob_hi =  0.5*Lx  0.5*Ly Lz
 geometry.prob_lo = -0.5*Lx -0.5*Ly 0
-amr.n_cell = 10 10 50
+amr.n_cell = 40 40 40
 max_step = 500
 warpx.const_dt = dt
 
@@ -59,14 +59,6 @@ protons.uz_min = -0.000134
 protons.ux_max = 9.5e-05
 protons.uy_max = 9.5e-05
 protons.uz_max = 0.000134
-
-#########################
-# STL Embedded Boundary #
-#########################
-eb2.geom_type = stl
-eb2.stl_file = cylinder.stl
-eb2.cover_multiple_cuts=1
-# warpx.eb_potential(x,y,z,t) = "V_eb"
 
 ##########
 # FIELDS #
