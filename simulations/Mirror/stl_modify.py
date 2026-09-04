@@ -12,8 +12,8 @@ import numpy as np
 
 ### USER-DEFINED VARIABLES ###
 INPUT_PATH = Path('cylinder.stl').resolve()
-OUTPUT_PATH = Path('copyCylinder.stl').resolve()
-SCALE = 0.001
+OUTPUT_PATH = Path('cylinder_OGMirror.stl').resolve()
+SCALE = 0.005
 MIRROR = False
 MIRROR_PLANE = 'XY'  # Options: 'XY', 'XZ', 'YZ'
 ROTATION_POINT = np.array([0., 0., 0.])

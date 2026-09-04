@@ -4,7 +4,7 @@ import h5py
 from pathlib import Path
 
 ### USER-DEFINED VARIABLES ###
-INPUT_PATH = Path('copy.h5').resolve()
+INPUT_PATH = Path('example-femm-3d_translated.h5').resolve()
 PRINT_ATTRIBUTES = True
 
 

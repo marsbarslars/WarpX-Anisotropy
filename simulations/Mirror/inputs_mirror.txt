@@ -1,9 +1,9 @@
 ##########################
 # USER-DEFINED CONSTANTS #
 ##########################
-my_constants.Lx = 0.2 # [m]
-my_constants.Ly = 0.2 # [m]
-my_constants.Lz = 1 # [m]
+my_constants.Lx = 2 # [m]
+my_constants.Ly = 2 # [m]
+my_constants.Lz = 5 # [m]
 my_constants.dt = 4.4e-7 # [s]
 my_constants.Np = 1000
 
@@ -13,8 +13,8 @@ my_constants.Np = 1000
 geometry.dims = 3
 geometry.prob_hi =  0.5*Lx  0.5*Ly Lz
 geometry.prob_lo = -0.5*Lx -0.5*Ly 0
-amr.n_cell = 10 10 50
-max_step = 500
+amr.n_cell = 32 32 80
+max_step = 600
 warpx.const_dt = dt
 
 ##############
@@ -27,13 +27,21 @@ warpx.grid_type = collocated
 warpx.serialize_initial_conditions = 0
 warpx.use_filter = 0
 
+#########################
+# STL Embedded Boundary #
+#########################
+eb2.geom_type = stl
+eb2.stl_file = cylinder_OGMirror.stl
+eb2.cover_multiple_cuts = 1
+
 ##############
 # BOUNDARIES #
 ##############
-boundary.field_hi = pec pec pec
-boundary.field_lo = pec pec pec
-boundary.particle_hi = absorbing absorbing absorbing
-boundary.particle_lo = absorbing absorbing absorbing
+boundary.field_hi = pec pec periodic
+boundary.field_lo = pec pec periodic
+boundary.particle_hi = absorbing absorbing Periodic_ReflectParVel
+boundary.particle_lo = absorbing absorbing Periodic_ReflectParVel
+boundary.particle_eb = absorbing
 
 #############
 # PARTICLES #
@@ -41,32 +49,47 @@ boundary.particle_lo = absorbing absorbing absorbing
 particles.species_names = protons
 protons.charge = q_e
 protons.mass = m_p
-protons.do_not_deposit = 1 # test particles
+protons.do_not_deposit = 0  # protons interact
 protons.initialize_self_fields = 0
-protons.injection_style = gaussian_beam
-protons.x_rms = 0.1*Lx
-protons.y_rms = 0.1*Ly
-protons.z_rms = 0.1*Lz
-protons.x_m = 0.
-protons.y_m = 0.
-protons.z_m = 0.5*Lz
-protons.npart = Np
-protons.q_tot = q_e*Np
+# protons.injection_style = gaussian_beam
+# protons.xmin = -0.1*Lx
+# protons.xmax = 0.1*Lx
+# protons.ymin = -0.1*Ly
+# protons.ymax = 0.1*Ly
+# protons.zmin = -0.1*Lz+2.5
+# protons.zmax = 0.1*Lz+2.5
+# protons.x_rms = 0.1*Lx
+# protons.y_rms = 0.1*Ly
+# protons.z_rms = 0.1*Lz
+# protons.x_m = 0.
+# protons.y_m = 0.
+# protons.z_m = 0.5*Lz
+# protons.npart = Np
+# protons.q_tot = q_e*Np
 protons.momentum_distribution_type = uniform
-protons.ux_min = -9.5e-05
+protons.ux_min = 0.0001
 protons.uy_min = -9.5e-05
-protons.uz_min = -0.000134
-protons.ux_max = 9.5e-05
+protons.uz_min = 0.0001
+protons.ux_max = 0.00011
 protons.uy_max = 9.5e-05
-protons.uz_max = 0.000134
+protons.uz_max = 0.00011
 
-#########################
-# STL Embedded Boundary #
-#########################
-eb2.geom_type = stl
-eb2.stl_file = cylinder.stl
-eb2.cover_multiple_cuts=1
-# warpx.eb_potential(x,y,z,t) = "V_eb"
+#####################
+# PARTICLES IN BEAM #
+#####################
+my_constants.y0 = 0.
+my_constants.z0 = 1.
+my_constants.sigma_y = 0.1
+my_constants.sigma_z = 0.1
+protons.do_continuous_injection = 1
+protons.injection_style = NFluxPerCell
+protons.flux_profile = parse_flux_function
+protons.flux_function(x,y,z,t) = "1.e5 * (abs(y-y0)<sigma_y) * (abs(z-z0)<sigma_z)"
+protons.inject_from_embedded_boundary = 0
+protons.surface_flux_pos = -0.2
+protons.flux_normal_axis = x
+protons.flux_direction = 1
+protons.num_particles_per_cell = 2
 
 ##########
 # FIELDS #
@@ -80,8 +103,9 @@ particles.read_fields_from_path = example-femm-3d.h5
 ###############
 diagnostics.diags_names = diag1
 diag1.diag_type = Full
-diag1.fields_to_plot = Bx By Bz
+diag1.fields_to_plot = Bx By Bz eb_covered T_protons
 diag1.format = openpmd
+diag1.openpmd_backend = bp5
 diag1.intervals = 1
 diag1.proton.variables = ux uy uz w x y z
 diag1.species = protons

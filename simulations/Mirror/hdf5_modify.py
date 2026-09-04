@@ -9,7 +9,7 @@ import numpy as np
 INPUT_PATH = Path('example-femm-3d.h5').resolve()
 OUTPUT_PATH = Path('copy.h5').resolve()
 GRID_SCALE = 1.
-GRID_TRANSLATION = np.array([0., 0., 0.])
+GRID_TRANSLATION = np.array([0., 0., -2.5])
 B_SCALE = 1.
 E_SCALE = 1.
 
