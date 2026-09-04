@@ -1,0 +1,62 @@
+[
+  {
+    "angle_deg": 30,
+    "control_survival": 0.997,
+    "hybrid_survival": 0.998,
+    "collision_associated_loss_fraction": -0.0010000000000000009,
+    "control_energy_ratio": 0.9999999999999999,
+    "hybrid_energy_ratio": 0.9394870631887123,
+    "collision_associated_energy_loss_fraction": 0.060512936811287554,
+    "control_pitch_mean_final": 0.7395312697872611,
+    "hybrid_pitch_mean_final": 0.7107559061165126,
+    "collision_associated_pitch_mean_shift": -0.02877536367074851,
+    "control_pitch_std_final": 0.09313063671015848,
+    "hybrid_pitch_std_final": 0.16414143646548388,
+    "collision_associated_pitch_variance": 0.01826909567091296
+  },
+  {
+    "angle_deg": 35,
+    "control_survival": 0.999,
+    "hybrid_survival": 0.999,
+    "collision_associated_loss_fraction": 0.0,
+    "control_energy_ratio": 0.9999999999999992,
+    "hybrid_energy_ratio": 0.9369146223093846,
+    "collision_associated_energy_loss_fraction": 0.06308537769061462,
+    "control_pitch_mean_final": 0.6641714926763451,
+    "hybrid_pitch_mean_final": 0.6417169830385956,
+    "collision_associated_pitch_mean_shift": -0.02245450963774953,
+    "control_pitch_std_final": 0.11618617637686995,
+    "hybrid_pitch_std_final": 0.18352362539303085,
+    "collision_associated_pitch_variance": 0.020181693496324385
+  },
+  {
+    "angle_deg": 40,
+    "control_survival": 0.999,
+    "hybrid_survival": 0.998,
+    "collision_associated_loss_fraction": 0.0010000000000000009,
+    "control_energy_ratio": 1.0,
+    "hybrid_energy_ratio": 0.9421168218226356,
+    "collision_associated_energy_loss_fraction": 0.057883178177364436,
+    "control_pitch_mean_final": 0.5866417741046296,
+    "hybrid_pitch_mean_final": 0.5685725006556163,
+    "collision_associated_pitch_mean_shift": -0.018069273449013323,
+    "control_pitch_std_final": 0.13993456210710686,
+    "hybrid_pitch_std_final": 0.201688176894223,
+    "collision_associated_pitch_variance": 0.02109643902680764
+  },
+  {
+    "angle_deg": 60,
+    "control_survival": 0.997,
+    "hybrid_survival": 0.996,
+    "collision_associated_loss_fraction": 0.0010000000000000009,
+    "control_energy_ratio": 0.9999999999999997,
+    "hybrid_energy_ratio": 0.9411851376215159,
+    "collision_associated_energy_loss_fraction": 0.05881486237848377,
+    "control_pitch_mean_final": 0.2997051435614436,
+    "hybrid_pitch_mean_final": 0.2916282187651507,
+    "collision_associated_pitch_mean_shift": -0.008076924796292906,
+    "control_pitch_std_final": 0.22413978682479352,
+    "hybrid_pitch_std_final": 0.26394100702687573,
+    "collision_associated_pitch_variance": 0.01942621115249738
+  }
+]
