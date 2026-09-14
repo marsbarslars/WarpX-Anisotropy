@@ -1,0 +1,321 @@
+{
+  "date": "2026-09-10",
+  "runs": [
+    {
+      "case": "ion_coulomb",
+      "run": "/mnt/c/Users/ryanv/Desktop/BOOGERAIDS/WIPPL/WarpX-Anisotropy/simulations/SLAM/mirror_background/runs/ion_coulomb_smoke200",
+      "execution": {
+        "returncode": 0,
+        "wall_seconds": 13.07999513599998,
+        "command": [
+          "/home/ryanv/src/warpx/build_gpu_py/bin/warpx.3d.NOMPI.CUDA.DP.PDP.OPMD.EB.QED",
+          "inputs.txt"
+        ],
+        "binary_sha256": "9cdadd080e1fa665c1c9a2f70a7e31ace1973f29d3943985d9a84d9a19d88085",
+        "source_commit": "bd8c12ff8fc8d99682fef25cff92d99ea14f2bcc"
+      },
+      "horizon_s": 1.9999999999999998e-05,
+      "checks": {
+        "exit_zero": true,
+        "cuda_initialized": true,
+        "binary_collision_dispatch_in_profile": true,
+        "number_finite": true,
+        "energy_finite": true,
+        "momentum_finite": true,
+        "field_energy_finite": true,
+        "field_max_finite": true,
+        "horizon_reached": true,
+        "first_snapshot_at_t0": true,
+        "protons_nonempty": true,
+        "protons_snapshots_finite": true,
+        "protons_away_from_z_seam_at_snapshots": true,
+        "background_ions_nonempty": true,
+        "background_ions_snapshots_finite": true,
+        "background_ions_away_from_z_seam_at_snapshots": true,
+        "background_ions_no_losses_short_run": true,
+        "background_ions_initial_thermal_energy": true
+      },
+      "species": {
+        "protons": {
+          "first_reduced_count": 0,
+          "final_count": 4135,
+          "final_physical_weight": 0.08076171875,
+          "final_mean_energy_eV": 11.723468504529393,
+          "initial_mean_energy_eV": 0.0,
+          "min_snapshot_z_seam_clearance_m": 0.9044717841703726
+        },
+        "background_ions": {
+          "first_reduced_count": 259776,
+          "final_count": 259776,
+          "final_physical_weight": 7.927734375e+16,
+          "final_mean_energy_eV": 1.5006848331932188,
+          "initial_mean_energy_eV": 1.5006848331932188,
+          "min_snapshot_z_seam_clearance_m": 0.265625
+        }
+      },
+      "output_snapshots": 5,
+      "status": "integration_smoke_pass",
+      "not_validated": [
+        "Short integration smoke, not confinement or collision-rate validation",
+        "HDF5 seam is not periodic: do not use wrapped trajectories as physical evidence",
+        "Kinetic and reservoir densities differ; not a controlled physical comparison",
+        "Original tiny beam flux retained; source physical strength needs experimental specification",
+        "Unequal-weight pair collisions conserve statistically, not exactly per event",
+        "GPU random seed does not guarantee bitwise reproducibility"
+      ]
+    },
+    {
+      "case": "hybrid",
+      "run": "/mnt/c/Users/ryanv/Desktop/BOOGERAIDS/WIPPL/WarpX-Anisotropy/simulations/SLAM/mirror_background/runs/hybrid_smoke200",
+      "execution": {
+        "returncode": 0,
+        "wall_seconds": 13.073295734999988,
+        "command": [
+          "/home/ryanv/src/warpx/build_gpu_py/bin/warpx.3d.NOMPI.CUDA.DP.PDP.OPMD.EB.QED",
+          "inputs.txt"
+        ],
+        "binary_sha256": "9cdadd080e1fa665c1c9a2f70a7e31ace1973f29d3943985d9a84d9a19d88085",
+        "source_commit": "bd8c12ff8fc8d99682fef25cff92d99ea14f2bcc"
+      },
+      "horizon_s": 1.9999999999999998e-05,
+      "checks": {
+        "exit_zero": true,
+        "cuda_initialized": true,
+        "binary_collision_dispatch_in_profile": true,
+        "analytic_stopping_dispatch_in_profile": true,
+        "number_finite": true,
+        "energy_finite": true,
+        "momentum_finite": true,
+        "field_energy_finite": true,
+        "field_max_finite": true,
+        "horizon_reached": true,
+        "first_snapshot_at_t0": true,
+        "protons_nonempty": true,
+        "protons_snapshots_finite": true,
+        "protons_away_from_z_seam_at_snapshots": true,
+        "background_ions_nonempty": true,
+        "background_ions_snapshots_finite": true,
+        "background_ions_away_from_z_seam_at_snapshots": true,
+        "background_ions_no_losses_short_run": true,
+        "background_ions_initial_thermal_energy": true
+      },
+      "species": {
+        "protons": {
+          "first_reduced_count": 0,
+          "final_count": 4123,
+          "final_physical_weight": 0.08052734375,
+          "final_mean_energy_eV": 11.726033604027798,
+          "initial_mean_energy_eV": 0.0,
+          "min_snapshot_z_seam_clearance_m": 0.9062917151900625
+        },
+        "background_ions": {
+          "first_reduced_count": 259776,
+          "final_count": 259776,
+          "final_physical_weight": 7.927734375e+16,
+          "final_mean_energy_eV": 1.5006848331932188,
+          "initial_mean_energy_eV": 1.5006848331932188,
+          "min_snapshot_z_seam_clearance_m": 0.265625
+        }
+      },
+      "output_snapshots": 5,
+      "status": "integration_smoke_pass",
+      "not_validated": [
+        "Short integration smoke, not confinement or collision-rate validation",
+        "HDF5 seam is not periodic: do not use wrapped trajectories as physical evidence",
+        "Kinetic and reservoir densities differ; not a controlled physical comparison",
+        "Original tiny beam flux retained; source physical strength needs experimental specification",
+        "Unequal-weight pair collisions conserve statistically, not exactly per event",
+        "GPU random seed does not guarantee bitwise reproducibility"
+      ]
+    },
+    {
+      "case": "kinetic",
+      "run": "/mnt/c/Users/ryanv/Desktop/BOOGERAIDS/WIPPL/WarpX-Anisotropy/simulations/SLAM/mirror_background/runs/kinetic_smoke200",
+      "execution": {
+        "returncode": 0,
+        "wall_seconds": 33.07488239,
+        "command": [
+          "/home/ryanv/src/warpx/build_gpu_py/bin/warpx.3d.NOMPI.CUDA.DP.PDP.OPMD.EB.QED",
+          "inputs.txt"
+        ],
+        "binary_sha256": "9cdadd080e1fa665c1c9a2f70a7e31ace1973f29d3943985d9a84d9a19d88085",
+        "source_commit": "bd8c12ff8fc8d99682fef25cff92d99ea14f2bcc"
+      },
+      "horizon_s": 1e-08,
+      "checks": {
+        "exit_zero": true,
+        "cuda_initialized": true,
+        "binary_collision_dispatch_in_profile": true,
+        "no_analytic_stopping_double_count": true,
+        "number_finite": true,
+        "energy_finite": true,
+        "momentum_finite": true,
+        "field_energy_finite": true,
+        "field_max_finite": true,
+        "horizon_reached": true,
+        "first_snapshot_at_t0": true,
+        "protons_nonempty": true,
+        "protons_snapshots_finite": true,
+        "protons_away_from_z_seam_at_snapshots": true,
+        "background_ions_nonempty": true,
+        "background_ions_snapshots_finite": true,
+        "background_ions_away_from_z_seam_at_snapshots": true,
+        "background_ions_no_losses_short_run": true,
+        "background_ions_initial_thermal_energy": true,
+        "electrons_nonempty": true,
+        "electrons_snapshots_finite": true,
+        "electrons_away_from_z_seam_at_snapshots": true,
+        "electrons_no_losses_short_run": true,
+        "electrons_initial_thermal_energy": true,
+        "initial_background_exactly_neutral_sampling": true,
+        "electric_response_above_1e-8_V_m": true
+      },
+      "species": {
+        "protons": {
+          "first_reduced_count": 0,
+          "final_count": 4114,
+          "final_physical_weight": 4.017578125e-05,
+          "final_mean_energy_eV": 11.789856345112334,
+          "initial_mean_energy_eV": 0.0,
+          "min_snapshot_z_seam_clearance_m": 0.9000714398270024
+        },
+        "background_ions": {
+          "first_reduced_count": 259776,
+          "final_count": 259776,
+          "final_physical_weight": 79277343750.0,
+          "final_mean_energy_eV": 1.5006848086831241,
+          "initial_mean_energy_eV": 1.5006848331932188,
+          "min_snapshot_z_seam_clearance_m": 0.2653055694551402
+        },
+        "electrons": {
+          "first_reduced_count": 259776,
+          "final_count": 259776,
+          "final_physical_weight": 79277343750.0,
+          "final_mean_energy_eV": 14.984373774584617,
+          "initial_mean_energy_eV": 14.984536386774868,
+          "min_snapshot_z_seam_clearance_m": 0.22134683667081034
+        }
+      },
+      "output_snapshots": 5,
+      "initial_background_net_charge_C": 0.0,
+      "initial_max_abs_Ex_V_m": 0.0,
+      "final_max_abs_Ex_V_m": 0.48250501025131953,
+      "resolution": {
+        "lambda_De_m": 0.23508188704793942,
+        "lambda_D_combined_m": 0.07087985584970218,
+        "cell_size_m": 0.0625,
+        "electron_omega_p_dt": 0.00028207301127147495,
+        "electron_omega_c_max_dt": 0.08124563587658257
+      },
+      "remaining_particle_plus_E_energy_relative_change": 1.570954406582281e-05,
+      "energy_accounting_note": "Remaining energy only; injected/escaped energy not subtracted. This short run has tiny beam weight.",
+      "status": "integration_smoke_pass",
+      "not_validated": [
+        "Short integration smoke, not confinement or collision-rate validation",
+        "HDF5 seam is not periodic: do not use wrapped trajectories as physical evidence",
+        "Kinetic and reservoir densities differ; not a controlled physical comparison",
+        "Original tiny beam flux retained; source physical strength needs experimental specification",
+        "Unequal-weight pair collisions conserve statistically, not exactly per event",
+        "GPU random seed does not guarantee bitwise reproducibility"
+      ]
+    },
+    {
+      "case": "kinetic_half_dt",
+      "run": "/mnt/c/Users/ryanv/Desktop/BOOGERAIDS/WIPPL/WarpX-Anisotropy/simulations/SLAM/mirror_background/runs/kinetic_half_dt_smoke400",
+      "execution": {
+        "returncode": 0,
+        "wall_seconds": 60.723113512,
+        "command": [
+          "/home/ryanv/src/warpx/build_gpu_py/bin/warpx.3d.NOMPI.CUDA.DP.PDP.OPMD.EB.QED",
+          "inputs.txt"
+        ],
+        "binary_sha256": "9cdadd080e1fa665c1c9a2f70a7e31ace1973f29d3943985d9a84d9a19d88085",
+        "source_commit": "bd8c12ff8fc8d99682fef25cff92d99ea14f2bcc"
+      },
+      "horizon_s": 1e-08,
+      "checks": {
+        "exit_zero": true,
+        "cuda_initialized": true,
+        "binary_collision_dispatch_in_profile": true,
+        "no_analytic_stopping_double_count": true,
+        "number_finite": true,
+        "energy_finite": true,
+        "momentum_finite": true,
+        "field_energy_finite": true,
+        "field_max_finite": true,
+        "horizon_reached": true,
+        "first_snapshot_at_t0": true,
+        "protons_nonempty": true,
+        "protons_snapshots_finite": true,
+        "protons_away_from_z_seam_at_snapshots": true,
+        "background_ions_nonempty": true,
+        "background_ions_snapshots_finite": true,
+        "background_ions_away_from_z_seam_at_snapshots": true,
+        "background_ions_no_losses_short_run": true,
+        "background_ions_initial_thermal_energy": true,
+        "electrons_nonempty": true,
+        "electrons_snapshots_finite": true,
+        "electrons_away_from_z_seam_at_snapshots": true,
+        "electrons_no_losses_short_run": true,
+        "electrons_initial_thermal_energy": true,
+        "initial_background_exactly_neutral_sampling": true,
+        "electric_response_above_1e-8_V_m": true
+      },
+      "species": {
+        "protons": {
+          "first_reduced_count": 0,
+          "final_count": 8255,
+          "final_physical_weight": 4.0307617187500006e-05,
+          "final_mean_energy_eV": 11.762016242897104,
+          "initial_mean_energy_eV": 0.0,
+          "min_snapshot_z_seam_clearance_m": 0.9000589550360509
+        },
+        "background_ions": {
+          "first_reduced_count": 259776,
+          "final_count": 259776,
+          "final_physical_weight": 79277343750.0,
+          "final_mean_energy_eV": 1.500684805615707,
+          "initial_mean_energy_eV": 1.5006848331932188,
+          "min_snapshot_z_seam_clearance_m": 0.2653055691125641
+        },
+        "electrons": {
+          "first_reduced_count": 259776,
+          "final_count": 259776,
+          "final_physical_weight": 79277343750.0,
+          "final_mean_energy_eV": 14.984373778412138,
+          "initial_mean_energy_eV": 14.984536386774868,
+          "min_snapshot_z_seam_clearance_m": 0.22134685781971786
+        }
+      },
+      "output_snapshots": 5,
+      "initial_background_net_charge_C": 0.0,
+      "initial_max_abs_Ex_V_m": 0.0,
+      "final_max_abs_Ex_V_m": 0.48250293364139113,
+      "resolution": {
+        "lambda_De_m": 0.23508188704793942,
+        "lambda_D_combined_m": 0.07087985584970218,
+        "cell_size_m": 0.0625,
+        "electron_omega_p_dt": 0.00014103650563573747,
+        "electron_omega_c_max_dt": 0.040622817938291284
+      },
+      "remaining_particle_plus_E_energy_relative_change": 1.5709259097995698e-05,
+      "energy_accounting_note": "Remaining energy only; injected/escaped energy not subtracted. This short run has tiny beam weight.",
+      "status": "integration_smoke_pass",
+      "not_validated": [
+        "Short integration smoke, not confinement or collision-rate validation",
+        "HDF5 seam is not periodic: do not use wrapped trajectories as physical evidence",
+        "Kinetic and reservoir densities differ; not a controlled physical comparison",
+        "Original tiny beam flux retained; source physical strength needs experimental specification",
+        "Unequal-weight pair collisions conserve statistically, not exactly per event",
+        "GPU random seed does not guarantee bitwise reproducibility"
+      ]
+    }
+  ],
+  "kinetic_timestep_comparison": {
+    "same_horizon": true,
+    "max_Ex_relative_difference": 4.303810083428061e-06,
+    "electron_mean_energy_relative_difference": 2.5543411830142304e-10,
+    "coarse_startup_agreement_below_0.1_percent": true,
+    "not_a_convergence_claim": "Only one very short horizon, same spatial resolution; source macroparticle sampling changes with dt"
+  }
+}
