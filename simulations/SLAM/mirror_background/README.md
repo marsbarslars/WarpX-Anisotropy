@@ -101,3 +101,38 @@ thermal motion and finite spatial profile, not a strong injected beam.
 Large outputs stay in the locally ignored `runs/` directory; compact reports and
 source code can be committed separately. Nothing in this workflow pushes Git or
 changes Lars's WarpX source.
+
+## Temperature at the mirror center
+
+`TEMPERATURE.md` explains the measurement, interpretation, and what to send Lars.
+To collect the central particles at **every timestep**, without writing the full
+domain every timestep:
+
+```bash
+/home/ryanv/miniforge3/envs/warpx-gpu/bin/python workflow.py run --case kinetic --boundary standard-periodic --temperature-every 1
+```
+
+This adds a particle-only diagnostic in `r<0.25 m, 2.25<z<2.75 m`. It changes
+output settings only, not injection, collisions, timesteps, or boundaries.
+The ordinary full-domain snapshots are retained for independent cross-checks.
+`--temperature-every 0` (default) leaves the probe off; a positive integer sets
+its cadence. For a longer future run, choose a cadence appropriate to the physics
+and disk budget. The probe is spatially filtered but still writes raw particles.
+
+After the run, `temperature.py` automatically produces:
+
+- `temperature_history.png`: ion/electron temperatures and local particle counts.
+- `temperature_history.csv`: step, physical timestamp, species, temperature,
+  Cartesian component temperatures, mean velocity, bulk energy, and weights.
+- `temperature_summary.json`: compact results and comparisons with independently
+  selected particles in the ordinary snapshots.
+- `diags/center/openpmd/`: raw central particles, all local markers with physical
+  weights; no random downsampling. Empty beam selections have blank temperature,
+  not zero temperature.
+
+To regenerate these analysis products without rerunning the simulation:
+
+```bash
+/home/ryanv/miniforge3/envs/warpx-gpu/bin/python temperature.py runs/kinetic_temperature200_20260914
+/home/ryanv/miniforge3/envs/warpx-gpu/bin/python -m unittest -v test_workflow test_temperature
+```

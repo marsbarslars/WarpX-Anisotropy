@@ -117,9 +117,12 @@ def background(name: str, species: str, temperature: float, kinetic: bool, ppc: 
 """
 
 
-def generate(case: str, run: Path, field: Path, steps: int | None, ppc: int, wall: str) -> dict:
+def generate(case: str, run: Path, field: Path, steps: int | None, ppc: int, wall: str,
+             temperature_every: int = 0) -> dict:
     if case not in MODELS or wall not in ("stl", "analytic-bore"):
         raise ValueError("Unknown case or wall model")
+    if temperature_every < 0:
+        raise ValueError("Temperature diagnostic interval must be nonnegative")
     kinetic = case.startswith("kinetic")
     audit = field_audit(field)
     dt_limit = min(0.1 * ME / (QE * audit["Bmax_T"]),
@@ -212,7 +215,7 @@ protons.initialize_self_fields = 0
     text += f"""
 particles.B_ext_particle_init_style = read_from_file
 particles.read_fields_from_path = "{field}"
-diagnostics.diags_names = diag
+diagnostics.diags_names = diag{' center' if temperature_every else ''}
 diag.diag_type = Full
 diag.format = openpmd
 diag.openpmd_backend = h5
@@ -224,6 +227,29 @@ diag.write_species = 1
 """
     for name in species.split():
         text += f"diag.{name}.variables = x y z ux uy uz w\n"
+    # A separate, filtered particle-only diagnostic avoids dumping the entire
+    # simulation every step. All local particles are kept, with physical weights.
+    # Temperature is measured afterward, not imposed by this diagnostic.
+    probe = None
+    if temperature_every:
+        probe = {"radius_m": 0.25, "z_min_m": 2.25, "z_max_m": 2.75,
+                 "interval_steps": temperature_every, "species": species.split(),
+                 "filter": "(x*x+y*y<0.25*0.25)*(z>2.25)*(z<2.75)",
+                 "path": "diags/center/openpmd"}
+        text += f"""
+# Central temperature probe: no random downsampling and no field output.
+center.diag_type = Full
+center.format = openpmd
+center.openpmd_backend = h5
+center.file_prefix = {probe['path']}
+center.intervals = {temperature_every}
+center.fields_to_plot = none
+center.species = {species}
+center.write_species = 1
+"""
+        for name in species.split():
+            text += f"center.{name}.variables = x y z ux uy uz w\n"
+            text += f"center.{name}.plot_filter_function(t,x,y,z,ux,uy,uz) = \"{probe['filter']}\"\n"
     text += "\nwarpx.reduced_diags_names = number energy momentum field_energy field_max\nreduced_diags.path = diags/reduced/\nreduced_diags.precision = 18\n"
     for name, typ in (("number", "ParticleNumber"), ("energy", "ParticleEnergy"), ("momentum", "ParticleMomentum"),
                       ("field_energy", "FieldEnergy"), ("field_max", "FieldMaximum")):
@@ -234,6 +260,7 @@ diag.write_species = 1
                 "stl": str(STL), "stl_sha256": digest(STL), "field": audit,
                 "dt_s": dt, "max_step": nsteps, "horizon_s": dt*nsteps, "density_m3": density,
                 "Ti_eV": 1, "Te_eV": 10, "ppc_each_dimension": ppc, "species": species.split(),
+                "temperature_probe": probe,
                 "electron_mass_kg": ME if kinetic else None,
                 "self_consistent_E": kinetic, "analytic_electron_drag": case == "hybrid",
                 "collision_names": names, "pairwise_CoulombLog": 10,
@@ -346,6 +373,10 @@ def analyze(run: Path) -> dict:
             total = kinetic_energy + reduced["field_energy"][electric_keys[0]]
             result["remaining_particle_plus_E_energy_relative_change"] = float(total[-1]/total[0]-1)
             result["energy_accounting_note"] = "Remaining energy only; injected/escaped energy not subtracted. This short run has tiny beam weight."
+    if metadata.get("temperature_probe"):
+        from temperature import analyze_temperature
+        result["temperature"] = analyze_temperature(run)
+        checks["central_temperature_diagnostic_verified"] = result["temperature"]["checks_pass"]
     result["status"] = "integration_smoke_pass" if all(checks.values()) else "needs_review"
     result["not_validated"] = metadata["limitations"]
     write_json(run / "summary.json", result)
@@ -362,6 +393,8 @@ def main() -> None:
     parser.add_argument("--steps", type=int)
     parser.add_argument("--ppc", type=int, default=2)
     parser.add_argument("--wall", choices=("stl", "analytic-bore"), default="analytic-bore")
+    parser.add_argument("--temperature-every", type=int, default=0,
+                        help="Central particle-only snapshot interval; 1=every step, 0=off")
     parser.add_argument("--tag", default="")
     parser.add_argument("--run-dir", type=Path)
     args = parser.parse_args()
@@ -374,12 +407,15 @@ def main() -> None:
         parser.error("Select --boundary standard-periodic explicitly; read BOUNDARY_STATUS.md")
     if args.steps is not None and args.steps <= 0 or args.ppc <= 0:
         parser.error("Steps and ppc must be positive")
+    if args.temperature_every < 0:
+        parser.error("--temperature-every must be nonnegative")
     if not re.fullmatch(r"[A-Za-z0-9_-]*", args.tag):
         parser.error("Tag must contain only letters, digits, underscores, or hyphens")
     stamp = time.strftime("%Y%m%d-%H%M%S")
     run = HERE / "runs" / (args.case + "_" + (args.tag or stamp))
     run.mkdir(parents=True, exist_ok=False)
-    metadata = generate(args.case, run, args.field.resolve(strict=True), args.steps, args.ppc, args.wall)
+    metadata = generate(args.case, run, args.field.resolve(strict=True), args.steps, args.ppc,
+                        args.wall, args.temperature_every)
     print(f"Prepared {run}; {metadata['max_step']} steps, dt={metadata['dt_s']:.4g} s", flush=True)
     if args.action == "prepare":
         return

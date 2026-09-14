@@ -8,6 +8,25 @@ The imported hackathon files are useful as tested patterns for input generation,
 
 This file is the handoff document for future Codex sessions and collaborators. Update it whenever a major assumption, input asset, validation result, or project objective changes.
 
+## Temperature diagnostic update - 2026-09-14
+
+The original 11 background-workflow/context files were committed locally on
+`RyanZhu` as `dc4cd13`. No push was performed by this session.
+`mirror_background/TEMPERATURE.md` now explains the central temperature
+measurement and contains the measured startup results. `temperature.py` and
+`test_temperature.py` implement and test physical-weighted velocity covariance
+with mean flow removed. Generate with `--temperature-every 1` to sample every
+step in `r<0.25 m, 2.25<z<2.75 m`; the normal full snapshots remain available.
+
+The 200-step kinetic probe run (`runs/kinetic_temperature200_20260914`) completed
+10 ns successfully, with 201 central samples. Sixteen unit tests passed, and the
+central data agree with independent selections from all five ordinary snapshots.
+Central ions stay near 1.006865 eV. Central electrons go from 10.102915 to 9.997421
+eV while their local population changes from 3328 to 3204 markers. No injected
+beam particles reached the central region. These are diagnostic/startup results,
+not beam-heating evidence. See `TEMPERATURE.md` before explaining the curve.
+The actual input, raw particles, CSV, PNG, and summary remain in ignored `runs/`.
+
 ## Current direction - 2026-09-10 (supersedes the earlier staged plan below)
 
 Ryan asked to build directly on Lars's continuous proton source, add ion
