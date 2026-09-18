@@ -64,6 +64,15 @@ class TemperatureMoments(unittest.TestCase):
 
 @unittest.skipUnless(workflow.FIELD_DEFAULT.is_file(), "Local mirror field asset not available")
 class TemperatureDeck(unittest.TestCase):
+    def test_shareable_deck_matches_generated_kinetic_configuration(self):
+        with tempfile.TemporaryDirectory(prefix="temperature-shareable-") as directory:
+            run = Path(directory)
+            workflow.generate("kinetic", run, workflow.FIELD_DEFAULT, 600, 2, "analytic-bore", 1)
+            generated = deck_values((run / "inputs.txt").read_text())
+            shared = deck_values((workflow.HERE / "inputs_kinetic_temperature_30ns.txt").read_text())
+            generated["particles.read_fields_from_path"] = '"example-femm-3d.h5"'
+            self.assertEqual(generated, shared)
+
     def test_probe_changes_diagnostics_not_physics(self):
         with tempfile.TemporaryDirectory(prefix="temperature-deck-") as directory:
             plain, probe = Path(directory)/"plain", Path(directory)/"probe"

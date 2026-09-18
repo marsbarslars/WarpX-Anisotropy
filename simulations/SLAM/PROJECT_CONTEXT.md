@@ -8,7 +8,76 @@ The imported hackathon files are useful as tested patterns for input generation,
 
 This file is the handoff document for future Codex sessions and collaborators. Update it whenever a major assumption, input asset, validation result, or project objective changes.
 
+## Fluid-electron direction - 2026-09-18 (supersedes kinetic-electron target below)
+
+**Latest completion today:** start with `hybrid_ion_fluid/TODAY_HANDOFF.md`.
+The existing analytic periodic mirror now has an `energy_transport` setting:
+kinetic protons with an evolving electron entropy/internal-energy equation,
+gamma=5/3, no electron-ion/Joule source or conductive/wall heat-loss model.
+Two GPU runs reached 1 microsecond (5-ns and 2.5-ns steps), with finite selected
+diagnostics and six slide-ready PNG/SVG plots including ion/fluid timestep misfits.
+63 hybrid unit tests and 9 existing temperature tests pass. Differences are
+small (max 0.033067% ion and 0.000464594% fluid, normalized to stated initial
+scales), but do not demonstrate steady state, beam heating, or full convergence.
+
+The installed relaxation operator failed a directed-energy accounting test:
+counterstreams lose ion drift energy without a matching electron gain; a
+zero-rate control does not. Keep this operator OFF for mirror beam heating
+until corrected/replaced and independently validated. See the exact version,
+equations, artificial-test rates and measured results in `ELECTRON_MODEL_AUDIT.md`
+and `VERIFICATION_RESULTS.md`. Do not quietly use online-latest behavior as a
+description of this older installed executable.
+
+No vessel integration or new physical geometry today. Lars's updated matching
+Mirror/SLAM STL is available in fetched commit `50d81ac`, but the working local
+SLAM STL remains the older file; neither was used in the analytic tests. Stop
+after today's handoff and let Ryan inspect the input before further campaigns.
+
+The following paragraphs describe the earlier baseline before this upgrade:
+
+Ryan confirmed that Lars/Tony want kinetic background protons and fluid
+electrons. Electron heating is NOT yet a confirmed goal. A separate true
+hybrid-PIC workflow now lives in `hybrid_ion_fluid/`; the old `hybrid` preset in
+`mirror_background/` was only analytic electron stopping, not a fluid solver.
+Read the new README and RESULTS before reusing it. Isothermal Te=10 eV is a
+provisional baseline, with an explicit polytropic alternative; neither is a
+validated electron-heating model. Ion-ion collisions are an opt-in setting.
+
+This first-stage solver/diagnostic validation uses a labelled analytic periodic
+mirror and bore, NOT Lars's FEMM field or fixed SLAM vessel. The inherited FEMM
+map's off-axis periodic seam and particle-only application cannot be silently
+carried into the fluid solver. External vector-potential splitting gives both
+ions and electron fluid a consistent applied B in the validation fixture.
+
+Diagnostics use exact whole-cell selections: 416 central cells and 64
+near-source cells. Per-species physical-weighted velocity PDFs, cell-local
+drift-subtracted parallel/perpendicular/scalar T and P, density, marker/physical
+counts, plus electron-fluid Te/Pe are implemented. Raw runs remain ignored.
+Old presets, inputs, and results are preserved. Four short GPU tests completed
+(20 ns baseline, 20 ns half-dt, 50 ns with ion collisions, 4 ns polytropic);
+20 new unit tests and the completed-run checks passed. This is not beam-heating
+evidence or a long-time validation.
+
+Lars's update was identified by fetching `origin/main` (metadata only): commit
+`50d81ac` "Included SLAM mirror and custom periodic BCs". Its new box has
+z=-0.25..0.25 m, so the old z=2.5 m central ROI cannot be reused. Its input
+requires untracked `SLAM_field.h5` and a custom boundary; only a modified
+executable, not the WarpX source patch/build recipe, is included in the commit.
+Read `hybrid_ion_fluid/RESULTS.md` for exact findings and questions for Lars.
+No vessel asset overwrite, merge, source rebuild, commit, or push was performed.
+
 ## Temperature diagnostic update - 2026-09-14
+
+Follow-up: Ryan requested a longer unchanged kinetic case and a clearer model/
+temperature explanation for Lars. `runs/kinetic_temperature600_30ns_20260914`
+completed 30 ns (600 steps) with 601 temperature samples; all operational and
+snapshot checks passed. No beam particles reached the central probe. Ti remains
+near 1.006864 eV; final Te is 10.019087 eV. `mirror_background/LARS_HANDOFF.md`
+contains the detailed comparison of four physical presets plus one half-dt check,
+the exact measurement region, result interpretation and sharing instructions.
+`inputs_kinetic_temperature_30ns.txt` is a portable copy with only the external
+field path changed. Seventeen unit tests pass. No push was performed; this
+follow-up's note/input/code edits are local working-tree changes.
 
 The original 11 background-workflow/context files were committed locally on
 `RyanZhu` as `dc4cd13`. No push was performed by this session.

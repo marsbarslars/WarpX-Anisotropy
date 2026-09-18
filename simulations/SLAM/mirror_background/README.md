@@ -105,6 +105,9 @@ changes Lars's WarpX source.
 ## Temperature at the mirror center
 
 `TEMPERATURE.md` explains the measurement, interpretation, and what to send Lars.
+`LARS_HANDOFF.md` gives a concise physical-setup/model comparison and explicit
+central-region definition. `inputs_kinetic_temperature_30ns.txt` is a shareable
+standalone 30-ns kinetic deck; only its external field path differs from the run.
 To collect the central particles at **every timestep**, without writing the full
 domain every timestep:
 

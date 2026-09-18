@@ -171,7 +171,7 @@ def analyze_temperature(run: Path) -> dict:
                   "Finite-region mean flow is removed; unresolved flow gradients can remain",
                   "No Bessel correction: distribution moment, not an unbiased sample estimator",
                   "Particle exchange changes the sampled population; temperature change is not a heat budget",
-                  "Beam energy input is tiny and the 10 ns startup does not demonstrate beam heating"]}
+                  "The inherited beam energy input is tiny; a startup temperature trace alone does not demonstrate beam heating"]}
     for species in probe["species"]:
         subset = [r for r in rows if r["species"] == species]
         valid = [r["T_eV"] for r in subset if r["T_eV"] is not None]

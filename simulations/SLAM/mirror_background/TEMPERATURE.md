@@ -118,6 +118,13 @@ when raw particle inspection is unnecessary. No long-duration heating run was ma
 
 ## Sharing with Lars
 
+The unchanged kinetic setup has now also completed a 30-ns, 600-step extension:
+`runs/kinetic_temperature600_30ns_20260914`. It produced 601 central samples and
+passed the operational and independent-snapshot checks. Central Ti stays near
+1.006864 eV; final central Te is 10.019087 eV, with no central beam markers.
+See `LARS_HANDOFF.md` for the full model comparison, longer-run numbers, and a
+standalone input file to share. Longer duration alone has not established heating.
+
 Send the code/branch reference, the actual generated kinetic `inputs.txt`,
 `metadata.json`, and the small temperature figure and summary. The generated
 input contains a local absolute magnetic-field path: Lars must replace
