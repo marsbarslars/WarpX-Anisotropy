@@ -4,7 +4,7 @@ from stl import mesh
 from pathlib import Path
 
 ### USER-DEFINED VARIABLES ###
-INPUT_PATH = Path('cylinder_OGMirror.stl').resolve()
+INPUT_PATH = Path('SLAM_VV.stl').resolve()
 
 # Read STL
 model = mesh.Mesh.from_file(INPUT_PATH)

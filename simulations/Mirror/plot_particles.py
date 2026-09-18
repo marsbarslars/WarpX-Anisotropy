@@ -8,7 +8,7 @@ from openpmd_viewer import OpenPMDTimeSeries
 # ============================================================
 
 diag_dir = "diags/diag1"
-output_file = "movies/periodic.mp4"
+output_file = "movies/SLAM_mirror_full.mp4"
 
 fps = 30
 
@@ -220,16 +220,16 @@ grid["B"] = np.column_stack(
 # ============================================================
 # Create candidate field-line seeds
 #
-# All seeds lie in the XZ plane:
+# All seeds lie in the XY plane:
 #
-#     y = 0
+#     z = 0
 #
 # We generate many candidates and keep the first 10
 # that actually produce a streamline.
 # ============================================================
 
 n_candidate_x = 20
-n_candidate_z = 20
+n_candidate_y = 20
 
 
 candidate_x = np.linspace(
@@ -239,10 +239,10 @@ candidate_x = np.linspace(
 )
 
 
-candidate_z = np.linspace(
-    z_coords.min(),
-    z_coords.max(),
-    n_candidate_z
+candidate_y = np.linspace(
+    y_coords.min(),
+    y_coords.max(),
+    n_candidate_y
 )
 
 
@@ -251,13 +251,13 @@ candidate_seeds = []
 
 for x in candidate_x:
 
-    for z in candidate_z:
+    for y in candidate_y:
 
         candidate_seeds.append(
             [
                 x,
-                0.0,
-                z
+                y,
+                0.0
             ]
         )
 
@@ -315,12 +315,12 @@ for seed in candidate_seeds:
     if lines.n_points > 1:
 
         # ----------------------------------------------------
-        # Project streamline onto XZ plane
+        # Project streamline onto XY plane
         # ----------------------------------------------------
 
         points = lines.points.copy()
 
-        points[:, 1] = 0.0
+        points[:, 2] = 0.0
 
         lines.points = points
 
@@ -429,50 +429,50 @@ trail_actor = plotter.add_mesh(
 
 
 # ============================================================
-# XZ camera
+# XY camera
 # ============================================================
 
 xmin = x_coords.min()
 xmax = x_coords.max()
 
-zmin = z_coords.min()
-zmax = z_coords.max()
+ymin = y_coords.min()
+ymax = y_coords.max()
 
 
 xcenter = 0.5 * (
     xmin + xmax
 )
 
-zcenter = 0.5 * (
-    zmin + zmax
+ycenter = 0.5 * (
+    ymin + ymax
 )
 
 
 domain_size = max(
     xmax - xmin,
-    zmax - zmin
+    ymax - ymin
 )
 
 
-# Look directly along Y
+# Look directly along Z
 plotter.camera.position = (
     xcenter,
-    10.0 * domain_size,
-    zcenter
+    ycenter,
+    10.0 * domain_size
 )
 
 
 plotter.camera.focal_point = (
     xcenter,
-    0.0,
-    zcenter
+    ycenter,
+    0.0
 )
 
 
 plotter.camera.up = (
     0,
-    0,
-    1
+    1,
+    0
 )
 
 
@@ -536,23 +536,23 @@ for frame, it in enumerate(iterations):
 
     ids = data["id"]
     xs = data["x"]
-    zs = data["z"]
+    ys = data["y"]
 
 
     # ========================================================
     # Update particle history
     # ========================================================
 
-    for pid, x, z in zip(
+    for pid, x, y in zip(
         ids,
         xs,
-        zs
+        ys
     ):
 
         position = np.array(
             [
                 x,
-                z
+                y
             ]
         )
 
@@ -586,8 +586,8 @@ for frame, it in enumerate(iterations):
         current_points = np.column_stack(
             (
                 xs,
-                np.zeros_like(xs),
-                zs
+                ys,
+                np.zeros_like(xs)
             )
         )
 
@@ -634,16 +634,16 @@ for frame, it in enumerate(iterations):
             len(positions) - 1
         ):
 
-            x0, z0 = positions[j]
+            x0, y0 = positions[j]
 
-            x1, z1 = positions[j + 1]
+            x1, y1 = positions[j + 1]
 
 
             trail_points.append(
                 [
                     x0,
-                    0.0,
-                    z0
+                    y0,
+                    0.0
                 ]
             )
 
@@ -651,8 +651,8 @@ for frame, it in enumerate(iterations):
             trail_points.append(
                 [
                     x1,
-                    0.0,
-                    z1
+                    y1,
+                    0.0
                 ]
             )
 

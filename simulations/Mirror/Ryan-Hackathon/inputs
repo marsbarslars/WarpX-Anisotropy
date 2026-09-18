@@ -1,0 +1,141 @@
+##########################
+# HYBRID COLLISIONAL MIRROR
+##########################
+# Tutorial-scale beam: 5.630571 eV, born at B-min.
+# Background ions retain a kinetic velocity distribution and scatter the beam,
+# but their positions are fixed so an absorbing boundary cannot drain the bath.
+# Electrons are an analytic stopping bath and are not kinetic particles.
+# Charge/current deposition is disabled for both kinetic species.
+
+my_constants.Lx = 2.0
+my_constants.Ly = 2.0
+my_constants.Lz = 5.0
+my_constants.dt = 4.4000000000000002e-07
+my_constants.Nbeam = 5000
+my_constants.u0 = 0.00010955363982999378
+my_constants.alpha_rad = 0.6108652381980153
+my_constants.n_bg = 10000000000000000
+my_constants.Te_eV = 10
+my_constants.ui_std = 3.2646422826227541e-05
+
+############
+# NUMERICS #
+############
+geometry.dims = 3
+geometry.prob_lo = -0.5*Lx -0.5*Ly 0.0
+geometry.prob_hi =  0.5*Lx  0.5*Ly Lz
+amr.n_cell = 40 40 40
+amr.max_level = 0
+max_step = 680
+warpx.const_dt = dt
+
+algo.particle_shape = 1
+warpx.do_electrostatic = labframe
+warpx.grid_type = collocated
+warpx.serialize_initial_conditions = 1
+warpx.use_filter = 0
+warpx.random_seed = 42
+
+##############
+# BOUNDARIES #
+##############
+boundary.field_lo = pec pec pec
+boundary.field_hi = pec pec pec
+boundary.particle_lo = absorbing absorbing absorbing
+boundary.particle_hi = absorbing absorbing absorbing
+
+#############
+# PARTICLES #
+#############
+particles.species_names = beam_protons background_ions
+
+# Minority beam: identical spatial seed and birth geometry to the collisionless scan.
+beam_protons.species_type = proton
+beam_protons.do_not_deposit = 1
+beam_protons.initialize_self_fields = 0
+beam_protons.injection_style = gaussian_beam
+beam_protons.x_m = 0.0
+beam_protons.y_m = 0.0
+beam_protons.z_m = 2.5
+beam_protons.x_rms = 0.2
+beam_protons.y_rms = 0.2
+beam_protons.z_rms = 0.5
+beam_protons.npart = Nbeam
+beam_protons.q_tot = q_e*Nbeam
+beam_protons.momentum_distribution_type = constant
+beam_protons.ux = u0*sin(alpha_rad)
+beam_protons.uy = 0.0
+beam_protons.uz = u0*cos(alpha_rad)
+
+# Fixed-position Maxwellian proton reservoir. Momentum is still exchanged by collisions.
+background_ions.species_type = proton
+background_ions.do_not_deposit = 1
+background_ions.do_not_push = 1
+background_ions.initialize_self_fields = 0
+background_ions.injection_style = NUniformPerCell
+background_ions.num_particles_per_cell_each_dim = 1 1 1
+background_ions.profile = constant
+background_ions.density = n_bg
+background_ions.momentum_distribution_type = maxwellian
+background_ions.maxwellian_u_std_distribution_type = constant
+background_ions.ux_std = ui_std
+background_ions.uy_std = ui_std
+background_ions.uz_std = ui_std
+background_ions.maxwellian_u_mean_distribution_type = constant
+background_ions.ux_mean = 0.0
+background_ions.uy_mean = 0.0
+background_ions.uz_mean = 0.0
+
+##############
+# COLLISIONS #
+##############
+collisions.collision_names = beam_ion_coulomb beam_electron_stopping
+
+beam_ion_coulomb.type = pairwisecoulomb
+beam_ion_coulomb.species = beam_protons background_ions
+beam_ion_coulomb.CoulombLog = 10.0
+beam_ion_coulomb.ndt_supercycle = 1
+
+beam_electron_stopping.type = background_stopping
+beam_electron_stopping.species = beam_protons
+beam_electron_stopping.background_type = electrons
+beam_electron_stopping.background_mass = m_e
+beam_electron_stopping.background_density = n_bg
+beam_electron_stopping.background_temperature = Te_eV*q_e/kb
+
+##########
+# FIELDS #
+##########
+particles.B_ext_particle_init_style = read_from_file
+particles.read_fields_from_path = ../../example-femm-3d.h5
+
+###############
+# DIAGNOSTICS #
+###############
+diagnostics.diags_names = beam_diag background_sample
+
+beam_diag.diag_type = Full
+beam_diag.format = openpmd
+beam_diag.fields_to_plot = none
+beam_diag.intervals = 10
+beam_diag.species = beam_protons
+beam_diag.beam_protons.variables = x y z ux uy uz w
+
+background_sample.diag_type = Full
+background_sample.format = openpmd
+background_sample.fields_to_plot = none
+background_sample.intervals = 50
+background_sample.species = background_ions
+background_sample.background_ions.variables = x y z ux uy uz w
+background_sample.background_ions.random_fraction = 0.01
+
+warpx.reduced_diags_names = particle_energy particle_momentum particle_number
+particle_energy.type = ParticleEnergy
+particle_energy.intervals = 10
+particle_energy.precision = 18
+particle_momentum.type = ParticleMomentum
+particle_momentum.intervals = 10
+particle_momentum.precision = 18
+particle_number.type = ParticleNumber
+particle_number.intervals = 10
+particle_number.precision = 18

@@ -23,8 +23,9 @@ import pyvista as pv
 from openpmd_viewer import OpenPMDTimeSeries
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from plasma import load_field_map, load_particles          # noqa: E402
-from plasma.charts import ChartPanel, stack_side_by_side   # noqa: E402
+from plasma import load_particles                         # noqa: E402
+# from plasma import load_field_map                       # mirror-ratio charts disabled
+# from plasma.charts import ChartPanel, stack_side_by_side  # mirror-ratio charts disabled
 
 # ---------------------------------------------------------------- parameters
 
@@ -50,6 +51,8 @@ def parse_args():
                    help="trail length in frames; 0 for full history")
     p.add_argument("--zoom", type=float, default=1.0,
                    help=">1 tightens the framing around the domain")
+    p.add_argument("--plane", choices=("xy", "xz", "yz"), default="xz",
+                   help="coordinate plane to view (default: xz)")
     p.add_argument("--opacity", type=float, default=0.55,
                    help="opacity of the field rendering")
     p.add_argument("--isosurfaces", action="store_true",
@@ -184,8 +187,8 @@ def head_mesh(tracks, frame):
 
 # ------------------------------------------------------------------- camera
 
-def side_on_camera(plotter, bounds, zoom=1.0, window=(1400, 700)):
-    """Look down -y so the mirror axis (z) runs horizontally across the view.
+def side_on_camera(plotter, bounds, plane="xz", zoom=1.0, window=(1400, 700)):
+    """Look normal to the selected coordinate plane.
 
     Parallel projection, sized to the domain: a perspective view of a long thin
     machine draws the near and far faces of the bounding box at visibly
@@ -193,18 +196,32 @@ def side_on_camera(plotter, bounds, zoom=1.0, window=(1400, 700)):
     are simply closer to the camera.
     """
     xmin, xmax, ymin, ymax, zmin, zmax = bounds
-    cx, cy, cz = (xmin + xmax) / 2, (ymin + ymax) / 2, (zmin + zmax) / 2
-    span = max(xmax - xmin, zmax - zmin)
+    centers = {"x": (xmin + xmax) / 2,
+               "y": (ymin + ymax) / 2,
+               "z": (zmin + zmax) / 2}
+    spans = {"x": xmax - xmin, "y": ymax - ymin, "z": zmax - zmin}
+    plane_axes = {"xy": ("x", "y", "z"),
+                  "xz": ("z", "x", "y"),
+                  "yz": ("z", "y", "x")}
+    horizontal, vertical, normal = plane_axes[plane]
+    normal_vector = {"x": (1.0, 0.0, 0.0),
+                     "y": (0.0, 1.0, 0.0),
+                     "z": (0.0, 0.0, 1.0)}[normal]
+    span = max(spans.values())
+    eye = tuple(centers[axis] - 2.5 * span * component
+                for axis, component in zip(("x", "y", "z"), normal_vector))
     plotter.camera_position = [
-        (cx, cy - 2.5 * span, cz),   # eye
-        (cx, cy, cz),                # focal point
-        (1.0, 0.0, 0.0),             # view up = +x  ->  z is horizontal
+        eye,
+        (centers["x"], centers["y"], centers["z"]),
+        {"x": (1.0, 0.0, 0.0),
+         "y": (0.0, 1.0, 0.0),
+         "z": (0.0, 0.0, 1.0)}[vertical],
     ]
     plotter.enable_parallel_projection()
 
-    # Vertical on screen is x, horizontal is z. Fit whichever needs more room.
+    # Fit the selected plane while leaving room for the field and trajectories.
     aspect = window[0] / window[1]
-    half = max((xmax - xmin) / 2, (zmax - zmin) / 2 / aspect)
+    half = max(spans[vertical] / 2, spans[horizontal] / 2 / aspect)
     plotter.camera.parallel_scale = half * 1.06 / zoom
 
 
@@ -244,7 +261,9 @@ def main():
     tracks = load_tracks(ts, iterations, args.n_tracks, species)
 
     off_screen = bool(args.gif or args.mp4 or args.png)
-    charts = not args.no_charts and off_screen
+    # charts = not args.no_charts and off_screen
+    # ChartPanel depends on the mirror ratio and loss-cone calculations.
+    charts = False
     # 768 is divisible by 16, which keeps ffmpeg from silently resizing.
     win = (1200, 768) if charts else (1400, 700)
     p = pv.Plotter(off_screen=off_screen, window_size=win)
@@ -273,32 +292,33 @@ def main():
     p.add_mesh(pv.Box(grid.bounds), style="wireframe",
                color="gray", opacity=0.3, name="box")
 
-    side_on_camera(p, grid.bounds, args.zoom, win)
+    side_on_camera(p, grid.bounds, args.plane, args.zoom, win)
 
     panel = None
-    if charts:
-        fmap = load_field_map(args.path, iterations[0])
-        b_lo, b_hi, _ = fmap.mirror_ratio()
-        p0 = load_particles(args.path, iterations[0], species, ts=ts)
-        v_scale = float(np.percentile(p0.speed, 99.5) / 1e6)
-        panel = ChartPanel(args.chart_width, win[1], (b_lo, b_hi), v_scale,
-                           fmap.loss_cone_deg())
-        n_total = len(p0)
-
-        # Calibrate the density scale on frames spread across the run, not on
-        # frame 0 alone: the distribution concentrates as the loss cone empties.
-        probe = iterations[:: max(1, len(iterations) // 6)][:6]
-        samples = []
-        for it in probe:
-            q = load_particles(args.path, it, species, ts=ts)
-            if len(q):
-                bq = fmap.interpolate(q.x, q.y, q.z)
-                samples.append(q.v_par_perp(bq))
-        panel.calibrate(samples)
-
-        print(f"charts: |B| {b_lo:.3f}-{b_hi:.3f} T, loss cone "
-              f"{fmap.loss_cone_deg():.1f} deg, {n_total} particles, "
-              f"density ceiling calibrated on {len(samples)} frames")
+    # Mirror-ratio-dependent chart setup is disabled for now.
+    # if charts:
+    #     fmap = load_field_map(args.path, iterations[0])
+    #     b_lo, b_hi, _ = fmap.mirror_ratio()
+    #     p0 = load_particles(args.path, iterations[0], species, ts=ts)
+    #     v_scale = float(np.percentile(p0.speed, 99.5) / 1e6)
+    #     panel = ChartPanel(args.chart_width, win[1], (b_lo, b_hi), v_scale,
+    #                        fmap.loss_cone_deg())
+    #     n_total = len(p0)
+    #
+    #     # Calibrate the density scale on frames spread across the run, not on
+    #     # frame 0 alone: the distribution concentrates as the loss cone empties.
+    #     probe = iterations[:: max(1, len(iterations) // 6)][:6]
+    #     samples = []
+    #     for it in probe:
+    #         q = load_particles(args.path, it, species, ts=ts)
+    #         if len(q):
+    #             bq = fmap.interpolate(q.x, q.y, q.z)
+    #             samples.append(q.v_par_perp(bq))
+    #     panel.calibrate(samples)
+    #
+    #     print(f"charts: |B| {b_lo:.3f}-{b_hi:.3f} T, loss cone "
+    #           f"{fmap.loss_cone_deg():.1f} deg, {n_total} particles, "
+    #           f"density ceiling calibrated on {len(samples)} frames")
 
     writer = None
     if charts and (args.gif or args.mp4):

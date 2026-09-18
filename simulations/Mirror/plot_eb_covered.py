@@ -62,6 +62,19 @@ def load_xy_slice(path, iteration, z_index):
         if len(coords[axis]) > 1 else 1.0
         for axis in ("x", "y", "z")
     )
+
+    bounds = {}
+    for i, axis in enumerate(("x", "y", "z")):
+        bounds[axis] = (
+            float(coords[axis][0] - spacing[i] / 2),
+            float(coords[axis][-1] + spacing[i] / 2),
+        )
+
+    print("Simulation domain bounds:")
+    print(f"  x: {bounds['x'][0]} to {bounds['x'][1]}")
+    print(f"  y: {bounds['y'][0]} to {bounds['y'][1]}")
+    print(f"  z: {bounds['z'][0]} to {bounds['z'][1]}")
+
     origin = tuple(float(coords[axis][0] - spacing[i] / 2)
                    for i, axis in enumerate(("x", "y", "z")))
 

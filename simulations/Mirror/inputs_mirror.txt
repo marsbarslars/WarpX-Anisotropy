@@ -1,19 +1,18 @@
 ##########################
 # USER-DEFINED CONSTANTS #
 ##########################
-my_constants.Lx = 2 # [m]
-my_constants.Ly = 2 # [m]
-my_constants.Lz = 5 # [m]
+my_constants.Lx = 1.5 # [m]
+my_constants.Ly = 0.5 # [m]
+my_constants.Lz = 1 # [m]
 my_constants.dt = 4.4e-7 # [s]
-my_constants.Np = 1000
 
 ############
 # NUMERICS #
 ############
 geometry.dims = 3
-geometry.prob_hi =  0.5*Lx  0.5*Ly Lz
-geometry.prob_lo = -0.5*Lx -0.5*Ly 0
-amr.n_cell = 32 32 80
+geometry.prob_lo = -0.77 0.25 -0.25
+geometry.prob_hi =  0.77 0.75  0.25
+amr.n_cell = 96 32 32
 max_step = 600
 warpx.const_dt = dt
 
@@ -31,14 +30,14 @@ warpx.use_filter = 0
 # STL Embedded Boundary #
 #########################
 eb2.geom_type = stl
-eb2.stl_file = cylinder_OGMirror.stl
+eb2.stl_file = SLAM_VV.stl
 eb2.cover_multiple_cuts = 1
 
 ##############
 # BOUNDARIES #
 ##############
-boundary.field_hi = pec pec periodic
-boundary.field_lo = pec pec periodic
+boundary.field_hi = pec pec pec
+boundary.field_lo = pec pec pec
 boundary.particle_hi = absorbing absorbing Periodic_ReflectParVel
 boundary.particle_lo = absorbing absorbing Periodic_ReflectParVel
 boundary.particle_eb = absorbing
@@ -67,36 +66,36 @@ protons.initialize_self_fields = 0
 # protons.npart = Np
 # protons.q_tot = q_e*Np
 protons.momentum_distribution_type = uniform
-protons.ux_min = 0.0001
-protons.uy_min = -9.5e-05
-protons.uz_min = 0.0001
-protons.ux_max = 0.00011
-protons.uy_max = 9.5e-05
-protons.uz_max = 0.00011
+protons.ux_min = -0.0004
+protons.uy_min = -0.0004
+protons.uz_min = -9.5e-05
+protons.ux_max = -0.00035
+protons.uy_max = -0.00035
+protons.uz_max = 9.5e-05
 
 #####################
 # PARTICLES IN BEAM #
 #####################
-my_constants.y0 = 0.
-my_constants.z0 = 1.
-my_constants.sigma_y = 0.1
-my_constants.sigma_z = 0.1
+my_constants.x0 = 0.5
+my_constants.z0 = 0.
+my_constants.sigma_x = 0.05
+my_constants.sigma_z = 0.05
 protons.do_continuous_injection = 1
 protons.injection_style = NFluxPerCell
 protons.flux_profile = parse_flux_function
-protons.flux_function(x,y,z,t) = "1.e5 * (abs(y-y0)<sigma_y) * (abs(z-z0)<sigma_z)"
+protons.flux_function(x,y,z,t) = "1.e5 * (abs(x-x0)<sigma_x) * (abs(z-z0)<sigma_z)"
 protons.inject_from_embedded_boundary = 0
-protons.surface_flux_pos = -0.2
-protons.flux_normal_axis = x
-protons.flux_direction = 1
-protons.num_particles_per_cell = 2
+protons.surface_flux_pos = 0.6
+protons.flux_normal_axis = y
+protons.flux_direction = -1
+protons.num_particles_per_cell = 4
 
 ##########
 # FIELDS #
 ##########
 # field here is applied on directly the particles!
 particles.B_ext_particle_init_style = read_from_file
-particles.read_fields_from_path = example-femm-3d.h5
+particles.read_fields_from_path = SLAM_field.h5
 
 ###############
 # DIAGNOSTICS #
